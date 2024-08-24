@@ -39,7 +39,7 @@ pythogn3 parser.py grammar.txt < dev.raw > tree.txt
 python3 eval.py dev_cnf.txt tree.txt
 ```
 
-## 2. Denpendency parsing
+## 2. Denpendency parsing algorithm
 - Implement som key components of a transition-based dependency parser and analyze its behavior.
 
 ### Data (from S. Stymme)
@@ -53,4 +53,23 @@ python3 eval.py dev_cnf.txt tree.txt
 : Compare the original tree (en-ud-dev.tab vs. result.out)
 ```
 python3 oracle.py tab < en-ud-dev.tab > result.out
+```
+
+## 3. CrossLingual Dependency Parsing
+- Try out cross-lingual parsing by using UUParser to see how parsing for a low-resource language can be aided by using data from another language.
+- I choose Korea, Turkish and English
+
+### Data 
+- UD treebank (Universal Dependencies): UD_Korean-GSD, UD_Turkish-Atis, UD_English-Atis
+
+### Process
+1. Collect treebanks for three choosen language
+: A target language treebank (TGT), A transfer language treebank that you believe will be good (GTRF), A transfer language treebank that you do not believe will be good or at least not as good as GTRF (BTRF)
+
+2. Train the parser with single language, mutiple languages (UUParser)
+```
+uuparser --outdir [results directory] --datadir [your directory containing UD directories with the structure UD\_\*\*/iso\_id-ud-train/dev.conllu] --include [treebank to train on denoted by its ISO id] --disable-rlmost --json-isos /common/student/courses/parsing-5LN713/assign3/ud2.13_iso.json
+```
+```
+uuparser --outdir [results directory] --datadir [your directory containing UD directories with the structure UD\_\*\*/iso\_id-ud-train/dev.conllu] --disable-rlmost --include ["treebanks to train on denoted by their ISO id"] --multiling --json-isos /common/student/courses/parsing-5LN713/assign3/ud2.13_iso.json
 ```
