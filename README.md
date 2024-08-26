@@ -5,7 +5,6 @@
 ## 1. PCFG parsing (Probabilistic context free grammar)
 - Implement a PCFG parser using the CKY algorithm and evaluate it using treebank data
 - Reach F-score at least 75%
-- Results: Time for parsing is 11466.71s, F1-score is 0,726 (73%)
 
 ### Data (from S. Stymme)
 - Trees of sentences (Penn Treebank): train.dat
@@ -39,6 +38,10 @@ pythogn3 parser.py grammar.txt < dev.raw > tree.txt
 python3 eval.py dev_cnf.txt tree.txt
 ```
 
+### Result
+- Time for parsing is 11466.71s, F1-score is 0,726 (73%)
+
+
 ## 2. Denpendency parsing algorithm
 - Implement som key components of a transition-based dependency parser and analyze its behavior.
 
@@ -57,19 +60,31 @@ python3 oracle.py tab < en-ud-dev.tab > result.out
 
 ## 3. CrossLingual Dependency Parsing
 - Try out cross-lingual parsing by using UUParser to see how parsing for a low-resource language can be aided by using data from another language.
-- I choose Korea, Turkish and English
+- Choose a target language to parse and two other transfer languages to be trained for parsing the target language.
 
 ### Data 
 - UD treebank (Universal Dependencies): UD_Korean-GSD, UD_Turkish-Atis, UD_English-Atis
+- Recommanded to choose treebanks in similar domain.
+- Treebank files should be named by ISO id (the short name for each treebank, i.e. ko_gsd, sv_lines or en_ewt)
 
 ### Process
 1. Collect treebanks for three choosen language
-: A target language treebank (TGT), A transfer language treebank that you believe will be good (GTRF), A transfer language treebank that you do not believe will be good or at least not as good as GTRF (BTRF)
+: A target language treebank (TGT: Korean), A transfer language treebank that you believe will be good (GTRF: Turkish), A transfer language treebank that you do not believe will be good or at least not as good as GTRF (BTRF: English)
 
 2. Train the parser with single language, mutiple languages (UUParser)
+- Install uuparser (https://github.com/UppsalaNLP/uuparser/blob/master/README.md)
+- Make sure to use the same name convention given UD treebank when running following uuparser commands (ex. UD_Korean_GSD, UD_Turkish-Atis, UD_English-Atis)
+- Make sure to use quotes around the treebanks when you have more than one treebank 
+
+1) Single language
 ```
-uuparser --outdir [results directory] --datadir [your directory containing UD directories with the structure UD\_\*\*/iso\_id-ud-train/dev.conllu] --include [treebank to train on denoted by its ISO id] --disable-rlmost --json-isos /common/student/courses/parsing-5LN713/assign3/ud2.13_iso.json
+uuparser --outdir [results directory ex. result_ko] --datadir [your directory containing UD directories ex. . (current dir)] --include [treebank to train on denoted by its ISO id ex. ko_gsd-ud-train.conllu] --disable-rlmost --json-isos [json file ex. ./ud2.13_iso.json]
 ```
+2) Multiple languages
 ```
-uuparser --outdir [results directory] --datadir [your directory containing UD directories with the structure UD\_\*\*/iso\_id-ud-train/dev.conllu] --disable-rlmost --include ["treebanks to train on denoted by their ISO id"] --multiling --json-isos /common/student/courses/parsing-5LN713/assign3/ud2.13_iso.json
+uuparser --outdir [results directory ex. result_ko_en] --datadir [your directory containing UD directories ex. . (current dir)] --disable-rlmost --include ["treebanks to train on denoted by their ISO id" ex. "ko_gsd tr_atis"] --multiling --json-isos [json file ex. ./ud2.13_iso.json][json file ex. ./ud2.13_iso.json]
 ```
+
+### Result(Best F1-scores of TGT, GTRF, BTRG in UAS/LAS)
+- UAS: 42 (Korean), 46 (Korean-Turkish), 45 (Korean-English)
+- LAS: 24 (Korean), 34 (Korean-Turkish), 32 (Korean-English)
