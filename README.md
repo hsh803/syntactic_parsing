@@ -68,13 +68,13 @@ python3 oracle.py tab < en-ud-dev.tab > result.out
 - Treebank files should be named by ISO id (the short name for each treebank, i.e. ko_gsd, sv_lines or en_ewt)
 
 ### Process
-1. Collect treebanks for three choosen language
+- Collect treebanks for three choosen language
 : A target language treebank (TGT: Korean), A transfer language treebank that you believe will be good (GTRF: Turkish), A transfer language treebank that you do not believe will be good or at least not as good as GTRF (BTRF: English)
 
-2. Train the parser with single language, mutiple languages (UUParser)
-- Install uuparser (https://github.com/UppsalaNLP/uuparser/blob/master/README.md)
-- Make sure to use the same name convention given UD treebank when running following uuparser commands (ex. UD_Korean_GSD, UD_Turkish-Atis, UD_English-Atis)
-- Make sure to use quotes around the treebanks when you have more than one treebank 
+- Train the parser with single language, mutiple languages (UUParser)
+: Install uuparser (https://github.com/UppsalaNLP/uuparser/blob/master/README.md)
+: Make sure to use the same name convention given UD treebank when running following uuparser commands (ex. UD_Korean_GSD, UD_Turkish-Atis, UD_English-Atis)
+: Make sure to use quotes around the treebanks when you have more than one treebank 
 
 1) Single language
 ```
@@ -88,3 +88,41 @@ uuparser --outdir [results directory ex. result_ko_en] --datadir [your directory
 ### Result(Best F1-scores of TGT, GTRF, BTRG in UAS/LAS)
 - UAS: 42 (Korean), 46 (Korean-Turkish), 45 (Korean-English)
 - LAS: 24 (Korean), 34 (Korean-Turkish), 32 (Korean-English)
+- 
+## 4. Individual project
+- Parsing Korean with MaltParser and UUParser
+- Goal: How differently they work in operations, and how relatively good or bad they perform each other in parsing Korean, especially by comparing dependency relations and Pos-tagging of each parser.
+
+### Data
+- UD treebank (Universal Dependencies): UD_Korean-GSD (https://github.com/UniversalDependencies/UD_Korean-GSD/tree/master)
+
+### Process
+1. Install parsers
+- UUparser: https://github.com/UppsalaNLP/uuparser/blob/master/README.md
+- Maltparser: https://www.maltparser.org/download.html
+
+2. Prepare data
+- Download and save train and test data of UD_Korean-GSD in the working directory
+- Prepare coNLL-X files seperately by converting data in coNLL-U format to coNLL-x because MaltEval can only process data in coNLL-x format.
+```
+perl  /workdir/conllu_to_conllx.perl < input.conllu > output.conll
+```
+
+2. Train
+- UUParser
+: Train/Parse
+```
+uuparser --outdir . --datadir . --include ko_gsd
+uuparser --predict --outdir . --datadir . --include ko_gsd
+```
+
+- MaltParser
+: Run
+```
+java -jar maltparser-1.9.2.jar
+```
+: Train/Parse
+```
+java -jar -Xmx2g maltparser-1.9.2.jar -c myparser -m learn -i marltparser_ko_train.conll
+java -jar -Xmx2g maltparser-1.9.1.jar -c myparser -m parse -i maltparser_ko_dev.conll -o maltparser_output.conll
+```
