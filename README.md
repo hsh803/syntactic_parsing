@@ -88,13 +88,14 @@ uuparser --outdir [results directory ex. result_ko_en] --datadir [your directory
 ### Result(Best F1-scores of TGT, GTRF, BTRG in UAS/LAS)
 - UAS: 42 (Korean), 46 (Korean-Turkish), 45 (Korean-English)
 - LAS: 24 (Korean), 34 (Korean-Turkish), 32 (Korean-English)
-- 
+
 ## 4. Individual project
 - Parsing Korean with MaltParser and UUParser
 - Goal: How differently they work in operations, and how relatively good or bad they perform each other in parsing Korean, especially by comparing dependency relations and Pos-tagging of each parser.
 
 ### Data
 - UD treebank (Universal Dependencies): UD_Korean-GSD (https://github.com/UniversalDependencies/UD_Korean-GSD/tree/master)
+- Train: 4400, Test: 950 Korean sentences
 
 ### Process
 1. Install parsers
@@ -108,14 +109,13 @@ uuparser --outdir [results directory ex. result_ko_en] --datadir [your directory
 perl  /workdir/conllu_to_conllx.perl < input.conllu > output.conll
 ```
 
-2. Train
+2. Train/Evaluate
 - UUParser
 : Train/Parse
 ```
 uuparser --outdir . --datadir . --include ko_gsd
-uuparser --predict --outdir . --datadir . --include ko_gsd
 ```
-
+: Evaluate
 - MaltParser
 : Run
 ```
@@ -126,3 +126,16 @@ java -jar maltparser-1.9.2.jar
 java -jar -Xmx2g maltparser-1.9.2.jar -c myparser -m learn -i marltparser_ko_train.conll
 java -jar -Xmx2g maltparser-1.9.1.jar -c myparser -m parse -i maltparser_ko_dev.conll -o maltparser_output.conll
 ```
+: Evaluate
+```
+java -jar -Xmx2g MaltEval.jar -g ../maltparser_ko_dev.conll -s ../maltparser_output.conll --GroupBy Deprel:all
+
+--GroupBy Deprel:all
+--GroupBy Cpostag:all
+--Metric LAS;UAS
+```
+
+### Results
+- Both scores of UUParser are slightly greater than those of MaltParser.
+- The best LAS score is reached at epoch 29 in UUparser.
+<img width="350" height="100" alt="image" src="https://github.com/user-attachments/assets/a482a6e1-ab96-4edf-ace2-fc60d2548c95" />
