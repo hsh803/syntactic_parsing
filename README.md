@@ -115,7 +115,8 @@ perl  /workdir/conllu_to_conllx.perl < input.conllu > output.conll
 ```
 uuparser --outdir . --datadir . --include ko_gsd
 ```
-: Evaluate
+: Evaluate results of UAS and LAS are caluated and shown in terminal
+
 - MaltParser
 : Run
 ```
